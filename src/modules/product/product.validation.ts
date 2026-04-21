@@ -7,8 +7,12 @@ export const createProductSchema = z.object({
 });
 
 export const cursorPaginationSchema = z.object({
-  cursor: z.coerce.number().int().positive().optional(),
-  limit: z.coerce.number().int().positive().max(100).default(10),
+  cursor: z.coerce.number().int().min(0).optional(),
+  limit: z.coerce.number().int().min(0).max(100).default(10),
+});
+
+export const deleteProductSchema = z.object({
+  id: z.coerce.number().int().min(1),
 });
 
 export type CreateProduct = z.infer<typeof createProductSchema>;
