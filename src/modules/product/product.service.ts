@@ -1,14 +1,27 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 
+import { SqsService } from "@infra/sqs/sqs.service";
+
 import { ProductRepository } from "./product.repository";
 import { type CreateProduct, type CursorPagination } from "./product.validation";
 
 @Injectable()
 export class ProductService {
-  public constructor(private readonly productRepository: ProductRepository) {}
+  public constructor(
+    private readonly productRepository: ProductRepository,
+    private readonly sqsService: SqsService,
+  ) {}
 
-  create(payload: CreateProduct) {
-    return this.productRepository.create(payload);
+  async create(payload: CreateProduct) {
+    const createdProduct = await this.productRepository.create(payload);
+
+    await this.sqsService.publishProductCreated({
+      id: createdProduct.id,
+      name: createdProduct.name,
+      price: createdProduct.price,
+    });
+
+    return createdProduct;
   }
 
   getByCursor(payload: CursorPagination) {
@@ -21,5 +34,9 @@ export class ProductService {
     if (!deleted) {
       throw new NotFoundException(`Product with id ${productId} was not found`);
     }
+
+    await this.sqsService.publishProductDeleted({
+      id: productId,
+    });
   }
 }
