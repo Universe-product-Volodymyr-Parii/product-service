@@ -1,7 +1,8 @@
-import { envSchema } from "@infra/env/env.validator";
-import { InfraModule } from "@infra/infra.module";
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+
+import { envSchema } from "@infra/env/env.validator";
+import { InfraModule } from "@infra/infra.module";
 
 @Module({
   imports: [

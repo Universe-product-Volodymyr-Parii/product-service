@@ -1,7 +1,8 @@
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import { migrate } from "drizzle-orm/node-postgres/migrator";
-import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
 import { join } from "node:path";
+
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { Pool } from "pg";
 
 import { product } from "./product.schema";
