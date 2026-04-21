@@ -15,7 +15,7 @@ FROM node:24-alpine AS prod-deps
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev --ignore-scripts
 
 FROM node:24-alpine AS runner
 WORKDIR /app

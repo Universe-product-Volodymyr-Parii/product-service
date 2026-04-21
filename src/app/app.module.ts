@@ -1,6 +1,8 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
+import { ProductModule } from "@modules/product/product.module";
+
 import { envSchema } from "@infra/env/env.validator";
 import { InfraModule } from "@infra/infra.module";
 
@@ -12,6 +14,7 @@ import { InfraModule } from "@infra/infra.module";
       validate: (config) => envSchema.parse(config),
     }),
     InfraModule.forRoot(),
+    ProductModule,
   ],
   controllers: [],
   providers: [],
