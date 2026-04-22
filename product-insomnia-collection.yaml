@@ -1,0 +1,107 @@
+type: collection.insomnia.rest/5.0
+name: Products
+meta:
+  id: wrk_20fead06f180438084e3ccd2be8df3d9
+  created: 1776802537834
+  modified: 1776802537834
+collection:
+  - name: product
+    meta:
+      id: fld_f628bba705d64f359543e3812acb695c
+      created: 1776875550513
+      modified: 1776875550513
+      sortKey: -1776875550513
+    children:
+      - url: "{{ _.host }}products"
+        name: create
+        meta:
+          id: req_83b89080854f47eb9735a8885296d971
+          created: 1776802543491
+          modified: 1776875563634
+          isPrivate: false
+          sortKey: -1776875556963
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"name": "test1111",
+            	"price": "1001.01"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.host }}products/1"
+        name: delete
+        meta:
+          id: req_07daa696db2f40bf8e771d739b722b82
+          created: 1776802557370
+          modified: 1776875558669
+          isPrivate: false
+          sortKey: -1776875556913
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.host }}products"
+        name: get
+        meta:
+          id: req_881c70b414d140d2aee43e6f4ec1e2f6
+          created: 1776802566638
+          modified: 1776875561858
+          isPrivate: false
+          sortKey: -1776875557013
+        method: GET
+        parameters:
+          - id: pair_d73a37331ae04dc9b9481aaa14d5379b
+            name: cursor
+            value: "0"
+            disabled: false
+          - id: pair_286dee736d8e44a9a2960a64e644cb91
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_f31131efb1ec66a2f72c8712251c9b25ce2f8205
+    created: 1776802537838
+    modified: 1776802537838
+environments:
+  name: Base Environment
+  meta:
+    id: env_f31131efb1ec66a2f72c8712251c9b25ce2f8205
+    created: 1776802537837
+    modified: 1776802606064
+    isPrivate: false
+  data:
+    host: http://127.0.0.1:8080/
