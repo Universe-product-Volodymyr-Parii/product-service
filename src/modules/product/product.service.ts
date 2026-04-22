@@ -15,7 +15,7 @@ export class ProductService {
   async create(payload: CreateProduct) {
     const createdProduct = await this.productRepository.create(payload);
 
-    await this.sqsService.publishProductCreated({
+    this.sqsService.publishProductCreated({
       id: createdProduct.id,
       name: createdProduct.name,
       price: createdProduct.price,
@@ -35,7 +35,7 @@ export class ProductService {
       throw new NotFoundException(`Product with id ${productId} was not found`);
     }
 
-    await this.sqsService.publishProductDeleted({
+    this.sqsService.publishProductDeleted({
       id: productId,
     });
   }

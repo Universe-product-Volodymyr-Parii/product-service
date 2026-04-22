@@ -1,5 +1,5 @@
 import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 
 import { EnvService } from "@infra/env/env.service";
 
@@ -13,6 +13,7 @@ type ProductEventPayload = {
 
 @Injectable()
 export class SqsService {
+  private readonly logger = new Logger(SqsService.name);
   private readonly client: SQSClient;
   private readonly queueUrl: string;
 
@@ -28,16 +29,16 @@ export class SqsService {
     this.queueUrl = this.envService.get("SQS_QUEUE_URL");
   }
 
-  publishProductCreated(data: Record<string, unknown>) {
-    return this.publish({
+  publishProductCreated(data: Record<string, unknown>): void {
+    this.publish({
       data,
       occurredAt: new Date().toISOString(),
       type: "product.created",
     });
   }
 
-  publishProductDeleted(data: Record<string, unknown>) {
-    return this.publish({
+  publishProductDeleted(data: Record<string, unknown>): void {
+    this.publish({
       data,
       occurredAt: new Date().toISOString(),
       type: "product.deleted",
@@ -45,11 +46,15 @@ export class SqsService {
   }
 
   private async publish(payload: ProductEventPayload): Promise<void> {
-    await this.client.send(
-      new SendMessageCommand({
-        MessageBody: JSON.stringify(payload),
-        QueueUrl: this.queueUrl,
-      }),
-    );
+    try {
+      await this.client.send(
+        new SendMessageCommand({
+          MessageBody: JSON.stringify(payload),
+          QueueUrl: this.queueUrl,
+        }),
+      );
+    } catch (error) {
+      this.logger.error(`Failed to publish ${payload.type} event to SQS`, error);
+    }
   }
 }
