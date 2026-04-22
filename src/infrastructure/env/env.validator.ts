@@ -3,6 +3,7 @@ import { z } from "zod";
 export const envSchema = z.object({
   HOST: z.string().nonempty(),
   PORT: z.coerce.number().positive().max(65535),
+  FRONTEND_ORIGIN: z.url().nonempty().default("http://localhost:5173"),
 
   AWS_ACCESS_KEY_ID: z.string().nonempty().default("test"),
   AWS_REGION: z.string().nonempty().default("us-east-1"),
