@@ -1,5 +1,5 @@
 import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, OnModuleDestroy } from "@nestjs/common";
 
 import { AwsConfig } from "@infra/config/aws.config";
 
@@ -12,7 +12,7 @@ type ProductEventPayload = {
 };
 
 @Injectable()
-export class SqsService {
+export class SqsService implements OnModuleDestroy {
   private readonly logger = new Logger(SqsService.name);
   private readonly client: SQSClient;
   private readonly queueUrl: string;
@@ -40,6 +40,10 @@ export class SqsService {
     });
   }
 
+  onModuleDestroy(): void {
+    this.client.destroy();
+  }
+
   private async publish(payload: ProductEventPayload): Promise<void> {
     try {
       await this.client.send(
@@ -49,7 +53,39 @@ export class SqsService {
         }),
       );
     } catch (error) {
-      this.logger.error(`Failed to publish ${payload.type} event to SQS`, error);
+      this.logger.error(
+        `Failed to publish ${payload.type} event to SQS: ${this.formatError(error)}`,
+      );
     }
+  }
+
+  private formatError(error: unknown): string {
+    if (!(error instanceof Error)) {
+      return "Unknown SQS error";
+    }
+
+    const errorWithMetadata = error as Error & {
+      code?: string;
+      $metadata?: {
+        attempts?: number;
+        totalRetryDelay?: number;
+      };
+    };
+
+    const details = [
+      errorWithMetadata.name,
+      errorWithMetadata.code,
+      errorWithMetadata.message,
+    ].filter(Boolean);
+
+    if (errorWithMetadata.$metadata?.attempts) {
+      details.push(`sdkAttempts=${errorWithMetadata.$metadata.attempts}`);
+    }
+
+    if (errorWithMetadata.$metadata?.totalRetryDelay !== undefined) {
+      details.push(`sdkRetryDelay=${errorWithMetadata.$metadata.totalRetryDelay}ms`);
+    }
+
+    return details.join(" | ");
   }
 }

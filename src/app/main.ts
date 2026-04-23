@@ -7,6 +7,7 @@ const { PORT = 8080, HOST = "0.0.0.0", FRONTEND_ORIGIN = "http://localhost:5173"
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
   app.enableCors({
     origin: FRONTEND_ORIGIN,
   });

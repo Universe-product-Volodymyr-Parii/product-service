@@ -1,10 +1,13 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { APP_INTERCEPTOR } from "@nestjs/core";
 
 import { ProductModule } from "@modules/product/product.module";
 
 import { envSchema } from "@infra/env/env.validator";
 import { InfraModule } from "@infra/infra.module";
+
+import { RequestLoggingInterceptor } from "@lib/interceptors/request-logging.interceptor";
 
 @Module({
   imports: [
@@ -17,6 +20,11 @@ import { InfraModule } from "@infra/infra.module";
     ProductModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: RequestLoggingInterceptor,
+    },
+  ],
 })
 export class AppModule {}
